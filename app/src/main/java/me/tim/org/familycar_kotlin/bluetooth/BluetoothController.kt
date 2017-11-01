@@ -13,6 +13,7 @@ import kotlin.collections.ArrayList
  */
 class BluetoothController(private val contect: Context) {
     val adapter: BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+    var connected: Boolean = false
     lateinit var socket: BluetoothSocketWrapper
 
     fun verifyBluetooth() : Boolean {
@@ -43,9 +44,11 @@ class BluetoothController(private val contect: Context) {
         val connector: BluetoothConnector = BluetoothConnector(device, false, adapter, uuids)
         try {
             connector.connect()
+            connected = true
         }
         catch (e: IOException) {
-            e.printStackTrace()
+            println("Connection to Bluetooth failed")
+            //e.printStackTrace()
         }
     }
 

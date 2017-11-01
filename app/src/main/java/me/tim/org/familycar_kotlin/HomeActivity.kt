@@ -1,11 +1,15 @@
 package me.tim.org.familycar_kotlin
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.view.View
 import android.support.design.widget.NavigationView
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
@@ -13,8 +17,15 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
+import kotlinx.android.synthetic.main.content_home.*
+import me.tim.org.familycar_kotlin.data.*
+import me.tim.org.familycar_kotlin.location.LocationController
+import java.util.*
 
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+    private var MY_PERMISSIONS_REQUEST_FINE_LOCATION: Int = 0
+    private var locationController: LocationController? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,8 +45,42 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawer.addDrawerListener(toggle)
         toggle.syncState()
 
+        locationController = LocationController(applicationContext)
+
         val navigationView = findViewById(R.id.nav_view) as NavigationView
         navigationView.setNavigationItemSelectedListener(this)
+
+
+        setHandlers()
+
+        checkPermissions()
+    }
+
+    private fun setHandlers() {
+        btnTest.setOnClickListener(View.OnClickListener {  testReadWrite() })
+    }
+
+    fun testReadWrite() {
+        val writer = DataWriter(applicationContext)
+        val reader = DataReader(applicationContext)
+
+        val driver = Driver("testDriver")
+        val start = Calendar.getInstance()
+        val end = Calendar.getInstance()
+
+        val startLocation = locationController?.lastLocation
+        val endLocation = locationController?.lastLocation
+        val obdData = ArrayList<ObdData>()
+
+        val analysis = RideAnalysis(startLocation!!, endLocation!!, obdData)
+
+        val ride = Ride(driver, start, end, analysis)
+
+        writer.saveRide(ride)
+
+        val decryptedRide = reader.readRide()
+        println(decryptedRide)
+
     }
 
     override fun onBackPressed() {
@@ -88,5 +133,17 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
         drawer.closeDrawer(GravityCompat.START)
         return true
+    }
+
+
+    fun checkPermissions() {
+        val permissionCheck = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION),
+                    MY_PERMISSIONS_REQUEST_FINE_LOCATION)
+        }
     }
 }
