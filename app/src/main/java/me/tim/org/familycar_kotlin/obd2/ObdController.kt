@@ -1,5 +1,6 @@
 package me.tim.org.familycar_kotlin.obd2
 
+import android.content.Context
 import android.util.Log
 import com.github.pires.obd.commands.SpeedCommand
 import com.github.pires.obd.commands.engine.RPMCommand
@@ -14,13 +15,11 @@ import java.io.IOException
 /**
  * Created by Nekkyou on 27-10-2017.
  */
-class ObdController(
-        private val deviceAddress: String,
-        private val bluetoothController: BluetoothController
-        )
-{
+class ObdController(private val context: Context) {
+    private val bluetoothController: BluetoothController = BluetoothController(context)
+
     init {
-        bluetoothController.connect(deviceAddress)
+        bluetoothController.connect()
 
         val socket = bluetoothController.socket
         if (socket != null) {

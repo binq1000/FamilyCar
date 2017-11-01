@@ -31,8 +31,8 @@ class BluetoothController(private val contect: Context) {
         return adapter.getRemoteDevice(address)
     }
 
-    fun connect(address: String) {
-        val device = getDevice(address)
+    fun connect() {
+        val device = getDevice(getDeviceAddress())
 
         val uuids = ArrayList<UUID>()
         val uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
@@ -47,5 +47,10 @@ class BluetoothController(private val contect: Context) {
         catch (e: IOException) {
             e.printStackTrace()
         }
+    }
+
+    fun getDeviceAddress() : String {
+        // TODO search in the file, or search for the available ones with a certain name.
+        return "00:1D:A5:68:98:8B"
     }
 }
