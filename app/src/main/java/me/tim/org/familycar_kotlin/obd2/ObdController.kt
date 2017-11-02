@@ -4,16 +4,9 @@ import android.content.Context
 import android.util.Log
 import com.github.pires.obd.commands.SpeedCommand
 import com.github.pires.obd.commands.engine.RPMCommand
-import com.github.pires.obd.commands.protocol.EchoOffCommand
-import com.github.pires.obd.commands.protocol.LineFeedOffCommand
-import com.github.pires.obd.commands.protocol.SelectProtocolCommand
-import com.github.pires.obd.commands.protocol.TimeoutCommand
-import com.github.pires.obd.enums.ObdProtocols
 import me.tim.org.familycar_kotlin.bluetooth.BluetoothController
-import me.tim.org.familycar_kotlin.data.DataPoint
 import me.tim.org.familycar_kotlin.data.ObdData
 import java.io.IOException
-import java.util.*
 
 /**
  * Created by Nekkyou on 27-10-2017.
@@ -24,6 +17,8 @@ class ObdController(private val context: Context) {
     init {
         try {
             bluetoothController.connect()
+
+
         }
         catch (e: Exception) {
             e.printStackTrace()
@@ -40,7 +35,6 @@ class ObdController(private val context: Context) {
         while (!Thread.currentThread().isInterrupted) {
             try {
                 rpmCommand.run(socket.getInputStream(), socket.getOutputStream())
-
                 //Handle results
                 result = rpmCommand.rpm
                 Log.d(this.javaClass.name, "RPM: $result")
@@ -49,9 +43,7 @@ class ObdController(private val context: Context) {
             } catch (e: InterruptedException) {
                 e.printStackTrace()
             }
-
         }
-
         return result
     }
 
@@ -63,7 +55,6 @@ class ObdController(private val context: Context) {
         while (!Thread.currentThread().isInterrupted) {
             try {
                 speedCommand.run(socket.getInputStream(), socket.getOutputStream())
-
                 //Handle results
                 result = speedCommand.metricSpeed
                 Log.d(this.javaClass.name, "Speed: $result")
@@ -72,14 +63,12 @@ class ObdController(private val context: Context) {
             } catch (e: InterruptedException) {
                 e.printStackTrace()
             }
-
         }
 
         return result
     }
 
     fun requestData(): ObdData {
-        val data = ObdData(requestSpeed(), requestRpm())
-        return data
+        return ObdData(requestSpeed(), requestRpm())
     }
 }

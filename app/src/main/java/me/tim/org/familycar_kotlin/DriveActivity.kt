@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.app.NotificationCompat
+import android.util.Log
 
 import kotlinx.android.synthetic.main.activity_drive.*
 import kotlinx.android.synthetic.main.content_drive.*
@@ -50,7 +51,7 @@ class DriveActivity : AppCompatActivity() {
             rideController?.startRide()
 
             timer = fixedRateTimer(name = "uiUpdater", initialDelay = 1000, period = 1000) {
-                updateData()
+                runOnUiThread { updateData() }
             }
         }
     }
@@ -58,9 +59,16 @@ class DriveActivity : AppCompatActivity() {
     fun updateData() {
         runOnUiThread {
             val latestData = rideController?.data.latest()
-            tvRpm.text = latestData?.obdData?.rpm.toString()
+            if (latestData != null) {
+                tvRpm.text = "Touren: ${latestData.obdData.rpm.toString()}"
+                tvSpeed.text = "Snelheid: ${latestData.obdData.speed.toString()}"
+                tvLocation.text = "Location: \n Lat: ${latestData.location?.latitude} \n Long: ${latestData?.location?.longitude}"
+            }
+            else {
+                tvRpm.text = "LatestData is null"
+                Log.i("DriveActvity", "Latest data is null")
+            }
 
-            tvLocation.text = "Location \n Lat: ${latestData?.location?.latitude} \n Long: ${latestData?.location?.longitude}"
         }
     }
 }

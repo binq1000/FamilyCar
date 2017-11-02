@@ -30,10 +30,9 @@ class RideController(val context: Context) {
 
     private fun requestData() {
         val random: Random = Random()
-        val obdData = ObdData(random.nextInt(150), rpm = random.nextInt(8000))
-        //val obdData = obdController.requestData()
-
-        val datapoint = DataPoint(Calendar.getInstance(), locationController.lastLocation, obdData)
-        data.add(datapoint)
+        //val obdData = ObdData(random.nextInt(150), rpm = random.nextInt(8000))
+        val obdData = obdController.requestData()
+        val dataPoint = DataPoint(Calendar.getInstance(), locationController.lastLocation, obdData)
+        data.add(dataPoint)
     }
 }

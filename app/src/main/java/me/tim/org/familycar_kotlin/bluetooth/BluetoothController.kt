@@ -4,6 +4,11 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.content.Context
 import android.os.ParcelUuid
+import com.github.pires.obd.commands.protocol.EchoOffCommand
+import com.github.pires.obd.commands.protocol.LineFeedOffCommand
+import com.github.pires.obd.commands.protocol.SelectProtocolCommand
+import com.github.pires.obd.commands.protocol.TimeoutCommand
+import com.github.pires.obd.enums.ObdProtocols
 import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
@@ -43,7 +48,13 @@ class BluetoothController(private val contect: Context) {
 
         val connector: BluetoothConnector = BluetoothConnector(device, false, adapter, uuids)
         try {
-            connector.connect()
+            socket = connector.connect()
+
+            EchoOffCommand().run(socket.getInputStream(), socket.getOutputStream())
+            LineFeedOffCommand().run(socket.getInputStream(), socket.getOutputStream())
+            TimeoutCommand(100).run(socket.getInputStream(), socket.getOutputStream())
+            SelectProtocolCommand(ObdProtocols.AUTO).run(socket.getInputStream(), socket.getOutputStream())
+
             connected = true
         }
         catch (e: IOException) {
