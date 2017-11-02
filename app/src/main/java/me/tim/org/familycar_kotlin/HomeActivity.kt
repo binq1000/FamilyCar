@@ -24,7 +24,6 @@ import java.util.*
 
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private var MY_PERMISSIONS_REQUEST_FINE_LOCATION: Int = 0
-    private var locationController: LocationController? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,8 +44,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawer.addDrawerListener(toggle)
         toggle.syncState()
 
-        locationController = LocationController(applicationContext)
-
         val navigationView = findViewById(R.id.nav_view) as NavigationView
         navigationView.setNavigationItemSelectedListener(this)
 
@@ -60,21 +57,13 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         btnTest.setOnClickListener(View.OnClickListener {  testReadWrite() })
     }
 
-    fun testReadWrite() {
+    private fun testReadWrite() {
         val writer = DataWriter(applicationContext)
         val reader = DataReader(applicationContext)
 
         val driver = Driver("testDriver")
-        val start = Calendar.getInstance()
-        val end = Calendar.getInstance()
-
-        val startLocation = locationController?.lastLocation
-        val endLocation = locationController?.lastLocation
-        val obdData = ArrayList<ObdData>()
-
-        val analysis = RideAnalysis(startLocation!!, endLocation!!, obdData)
-
-        val ride = Ride(driver, start, end, analysis)
+        val obdData = ArrayList<DataPoint>()
+        val ride = Ride(driver, obdData)
 
         writer.saveRide(ride)
 
@@ -136,7 +125,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
 
-    fun checkPermissions() {
+    private fun checkPermissions() {
         val permissionCheck = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
 

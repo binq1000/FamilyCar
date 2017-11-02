@@ -8,10 +8,17 @@
     tools:context="me.tim.org.familycar_kotlin.DriveActivity"
     tools:showIn="@layout/activity_drive">
 
+    <Button
+        android:id="@+id/btnStartDrive"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/btn_start_drive"/>
+
     <TextView
         android:id="@+id/tvRpm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/btnStartDrive"
         android:text="Touren: "/>
 
     <TextView

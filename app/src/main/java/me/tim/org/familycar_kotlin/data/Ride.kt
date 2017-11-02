@@ -5,5 +5,7 @@ import java.util.*
 /**
  * Created by Nekkyou on 1-11-2017.
  */
-data class Ride(val driver: Driver, val startTime: Calendar, val endTime: Calendar, val analysis: RideAnalysis) {
+data class Ride(
+        val driver: Driver,
+        val dataPoints: List<DataPoint>) {
 }

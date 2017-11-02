@@ -1,6 +1,5 @@
 package me.tim.org.familycar_kotlin.location
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
 import android.os.Bundle
@@ -14,19 +13,19 @@ import com.google.android.gms.location.LocationServices
  * Created by Nekkyou on 1-11-2017.
  */
 class LocationController(private var context: Context) : GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
-    private var mGoogleApiClient: GoogleApiClient? = null
+    private var googleApiClient: GoogleApiClient? = null
     var lastLocation: Location? = null
 
     init {
-        if (mGoogleApiClient == null) {
-            mGoogleApiClient = GoogleApiClient.Builder(context)
+        if (googleApiClient == null) {
+            googleApiClient = GoogleApiClient.Builder(context)
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
                     .addApi(LocationServices.API)
                     .build()
         }
 
-        mGoogleApiClient?.connect()
+        googleApiClient?.connect()
 
 
     }
@@ -39,7 +38,7 @@ class LocationController(private var context: Context) : GoogleApiClient.Connect
         request.fastestInterval = 5000
         request.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, request, this)
+        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, request, this)
     }
 
     override fun onConnectionSuspended(p0: Int) {
