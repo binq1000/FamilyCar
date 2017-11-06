@@ -49,12 +49,6 @@ class BluetoothController(private val contect: Context) {
         val connector: BluetoothConnector = BluetoothConnector(device, false, adapter, uuids)
         try {
             socket = connector.connect()
-
-            EchoOffCommand().run(socket.getInputStream(), socket.getOutputStream())
-            LineFeedOffCommand().run(socket.getInputStream(), socket.getOutputStream())
-            TimeoutCommand(100).run(socket.getInputStream(), socket.getOutputStream())
-            SelectProtocolCommand(ObdProtocols.AUTO).run(socket.getInputStream(), socket.getOutputStream())
-
             connected = true
         }
         catch (e: IOException) {

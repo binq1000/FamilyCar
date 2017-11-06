@@ -4,6 +4,8 @@ import android.content.Context
 import android.util.Log
 import com.github.pires.obd.commands.SpeedCommand
 import com.github.pires.obd.commands.engine.RPMCommand
+import com.github.pires.obd.commands.protocol.*
+import com.github.pires.obd.enums.ObdProtocols
 import me.tim.org.familycar_kotlin.bluetooth.BluetoothController
 import me.tim.org.familycar_kotlin.data.ObdData
 import java.io.IOException
@@ -17,13 +19,23 @@ class ObdController(private val context: Context) {
     init {
         try {
             bluetoothController.connect()
-
-
+            initalCommands()
         }
         catch (e: Exception) {
             e.printStackTrace()
         }
 
+    }
+
+    fun initalCommands() {
+        val socket = bluetoothController.socket
+
+        EchoOffCommand().run(socket.getInputStream(), socket.getOutputStream())
+        LineFeedOffCommand().run(socket.getInputStream(), socket.getOutputStream())
+        HeadersOffCommand().run(socket.getInputStream(), socket.getOutputStream())
+        SpacesOffCommand().run(socket.getInputStream(), socket.getOutputStream())
+        TimeoutCommand(100).run(socket.getInputStream(), socket.getOutputStream())
+        SelectProtocolCommand(ObdProtocols.AUTO).run(socket.getInputStream(), socket.getOutputStream())
     }
 
 
@@ -32,17 +44,18 @@ class ObdController(private val context: Context) {
         val socket = bluetoothController.socket
 
         val rpmCommand = RPMCommand()
-        while (!Thread.currentThread().isInterrupted) {
-            try {
-                rpmCommand.run(socket.getInputStream(), socket.getOutputStream())
-                //Handle results
-                result = rpmCommand.rpm
-                Log.d(this.javaClass.name, "RPM: $result")
-            } catch (e: IOException) {
-                e.printStackTrace()
-            } catch (e: InterruptedException) {
-                e.printStackTrace()
-            }
+        try {
+            rpmCommand.run(socket.getInputStream(), socket.getOutputStream())
+            //Handle results
+            result = rpmCommand.rpm
+            Log.d(this.javaClass.name, "RPM: $result")
+
+        } catch (e: IOException) {
+            e.printStackTrace()
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
         return result
     }
@@ -52,23 +65,30 @@ class ObdController(private val context: Context) {
         val socket = bluetoothController.socket
 
         val speedCommand = SpeedCommand()
-        while (!Thread.currentThread().isInterrupted) {
-            try {
-                speedCommand.run(socket.getInputStream(), socket.getOutputStream())
-                //Handle results
-                result = speedCommand.metricSpeed
-                Log.d(this.javaClass.name, "Speed: $result")
-            } catch (e: IOException) {
-                e.printStackTrace()
-            } catch (e: InterruptedException) {
-                e.printStackTrace()
-            }
+        try {
+            speedCommand.run(socket.getInputStream(), socket.getOutputStream())
+            //Handle results
+            result = speedCommand.metricSpeed
+            Log.d(this.javaClass.name, "Speed: $result")
+
+        } catch (e: IOException) {
+            e.printStackTrace()
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        } catch (e: Exception) {
+            //Testing to catch all exceptions
+            e.printStackTrace()
         }
 
         return result
     }
 
     fun requestData(): ObdData {
-        return ObdData(requestSpeed(), requestRpm())
+        Log.d(this.javaClass.name, "Requesting data!")
+        val rpm = requestRpm()
+        val speed = requestSpeed()
+
+
+        return ObdData(speed, rpm)
     }
 }

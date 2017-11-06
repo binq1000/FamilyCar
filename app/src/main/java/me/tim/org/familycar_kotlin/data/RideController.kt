@@ -2,6 +2,7 @@ package me.tim.org.familycar_kotlin.data
 
 import android.content.Context
 import android.location.Location
+import android.util.Log
 import me.tim.org.familycar_kotlin.location.LocationController
 import me.tim.org.familycar_kotlin.obd2.ObdController
 import java.util.*
@@ -29,10 +30,14 @@ class RideController(val context: Context) {
     }
 
     private fun requestData() {
-        val random: Random = Random()
-        //val obdData = ObdData(random.nextInt(150), rpm = random.nextInt(8000))
+        Log.d(this.javaClass.name, "Requesting data.")
         val obdData = obdController.requestData()
+
         val dataPoint = DataPoint(Calendar.getInstance(), locationController.lastLocation, obdData)
         data.add(dataPoint)
+    }
+
+    fun requestSpeed() : Int? {
+        return obdController.requestSpeed()
     }
 }
