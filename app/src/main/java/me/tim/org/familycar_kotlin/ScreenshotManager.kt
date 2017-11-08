@@ -1,11 +1,10 @@
 package me.tim.org.familycar_kotlin
 
+import android.content.ContentResolver
 import android.content.Context
 import android.graphics.Bitmap
-import java.util.*
-import android.R.attr.bitmap
-import android.content.ContentResolver
 import android.provider.MediaStore
+import java.util.*
 
 
 /**

@@ -34,7 +34,7 @@ class BluetoothConnector(
                 success = true
                 break
             } catch (e: IOException) {
-                Log.d("Bluetooth", "\n Inital Connect failed \n", e)
+                Log.d("Bluetooth", "\n Initial Connect failed \n Attempting Fallback")
 
                 //Trying the fallback
                 try {
@@ -46,7 +46,7 @@ class BluetoothConnector(
                 } catch (e1: InterruptedException) {
                     Log.w("BT", e1.message, e1)
                 } catch (e1: IOException) {
-                    Log.w("BT", "Fallback failed. Cancelling.", e1)
+                    Log.w("BT", "Fallback failed. Cancelling.")
                 }
             }
         }
@@ -137,11 +137,11 @@ class BluetoothConnector(
 
         init {
             try {
-                val clazz = socket.getRemoteDevice().javaClass
+                val clazz = socket.remoteDevice.javaClass
                 val paramTypes = arrayOf<Class<*>>(Integer.TYPE)
                 val m = clazz.getMethod(methodName, *paramTypes)
                 val params = arrayOf<Any>(Integer.valueOf(1))
-                fallbackSocket = m.invoke(socket.getRemoteDevice(), *params) as BluetoothSocket
+                fallbackSocket = m.invoke(socket.remoteDevice, *params) as BluetoothSocket
             }
             catch (e: Exception) {
                 Log.i("Bluetooth", "Failed fallback: $e")

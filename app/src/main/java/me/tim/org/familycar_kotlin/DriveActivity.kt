@@ -1,32 +1,17 @@
 package me.tim.org.familycar_kotlin
 
-import android.app.Notification
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Bundle
-import android.os.Environment
+import android.os.Handler
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.app.NotificationCompat
 import android.util.Log
-import com.abdallahalaraby.blink.FileUtils
 import com.abdallahalaraby.blink.Screenshot
-
 import kotlinx.android.synthetic.main.activity_drive.*
 import kotlinx.android.synthetic.main.content_drive.*
-import me.tim.org.familycar_kotlin.data.Driver
-import me.tim.org.familycar_kotlin.data.DataPoint
-import me.tim.org.familycar_kotlin.data.Ride
+import me.tim.org.familycar_kotlin.customExceptions.ObdConnectionFailedException
 import me.tim.org.familycar_kotlin.data.RideController
-import me.tim.org.familycar_kotlin.location.LocationController
-import me.tim.org.familycar_kotlin.obd2.ObdController
 import java.util.*
 import kotlin.concurrent.fixedRateTimer
-import android.os.Environment.getExternalStorageDirectory
-
 
 
 class DriveActivity : AppCompatActivity() {
@@ -36,6 +21,8 @@ class DriveActivity : AppCompatActivity() {
 
     private lateinit var timer: Timer
     private var counter = 0
+
+    private val REQUEST_ENABLE_BT = 1035
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,8 +35,31 @@ class DriveActivity : AppCompatActivity() {
         }
 
         setHandlers()
+    }
 
-        rideController = RideController(applicationContext)
+    override fun onResume() {
+        super.onResume()
+        initController()
+    }
+
+
+    private fun initController() {
+        Log.i(this.javaClass.name, "Initializing RideController \n ")
+        if (rideController == null) {
+            Thread(Runnable {
+                try {
+                    rideController = RideController(applicationContext)
+                    runOnUiThread({ btnStartDrive.isEnabled = true})
+                } catch (ofc: ObdConnectionFailedException) {
+                    runOnUiThread({
+                        tvRpm.text = "Trying to connect to Obd"
+                        btnStartDrive.isEnabled = false
+                        val handler = Handler()
+                        handler.postDelayed({initController()}, 5000)
+                    })
+                }
+            }).start()
+        }
     }
 
 
@@ -70,7 +80,7 @@ class DriveActivity : AppCompatActivity() {
             if (latestData != null) {
                 tvRpm.text = "Touren: ${latestData.obdData.rpm.toString()}"
                 tvSpeed.text = "Snelheid: ${latestData.obdData.speed.toString()}"
-                tvLocation.text = "Location: \n Lat: ${latestData.location?.latitude} \n Long: ${latestData?.location?.longitude}"
+                tvLocation.text = "Location: \n Lat: ${latestData.location?.latitude} \n Long: ${latestData.location?.longitude}"
             }
             else {
                 tvRpm.text = "LatestData is null"
@@ -89,4 +99,7 @@ class DriveActivity : AppCompatActivity() {
             }
         }
     }
+
+
+
 }

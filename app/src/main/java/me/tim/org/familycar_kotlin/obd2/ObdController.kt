@@ -7,6 +7,8 @@ import com.github.pires.obd.commands.engine.RPMCommand
 import com.github.pires.obd.commands.protocol.*
 import com.github.pires.obd.enums.ObdProtocols
 import me.tim.org.familycar_kotlin.bluetooth.BluetoothController
+import me.tim.org.familycar_kotlin.customExceptions.BluetoothDisabledException
+import me.tim.org.familycar_kotlin.customExceptions.ObdConnectionFailedException
 import me.tim.org.familycar_kotlin.data.ObdData
 import java.io.IOException
 
@@ -20,14 +22,23 @@ class ObdController(private val context: Context) {
         try {
             bluetoothController.connect()
             initalCommands()
-        }
-        catch (e: Exception) {
+        } catch (btw: BluetoothDisabledException) {
+            throw btw
+        } catch (ocf: ObdConnectionFailedException) {
+            //ocf.printStackTrace()
+            throw ocf
+        } catch (e: Exception) {
             e.printStackTrace()
         }
 
     }
 
+    /**
+     *
+     */
     fun initalCommands() {
+        checkAvailable()
+
         val socket = bluetoothController.socket
 
         EchoOffCommand().run(socket.getInputStream(), socket.getOutputStream())
@@ -40,6 +51,8 @@ class ObdController(private val context: Context) {
 
 
     fun requestRpm(): Int {
+        checkAvailable()
+
         var result = 0
         val socket = bluetoothController.socket
 
@@ -61,6 +74,8 @@ class ObdController(private val context: Context) {
     }
 
     fun requestSpeed(): Int {
+        checkAvailable()
+
         var result = 0
         val socket = bluetoothController.socket
 
@@ -90,5 +105,15 @@ class ObdController(private val context: Context) {
 
 
         return ObdData(speed, rpm)
+    }
+
+    fun checkAvailable() {
+        if (!bluetoothController.connected) {
+            throw ObdConnectionFailedException("Failed to connect to the obd sensor")
+        }
+    }
+
+    fun isConnected() : Boolean {
+        return bluetoothController.connected
     }
 }

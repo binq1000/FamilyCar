@@ -6,5 +6,4 @@ import java.util.*
 /**
  * Created by Nekkyou on 1-11-2017.
  */
-class DataPoint(val time: Calendar, val location: Location?, val obdData: ObdData) {
-}
+class DataPoint(val time: Calendar, val location: Location?, val obdData: ObdData)

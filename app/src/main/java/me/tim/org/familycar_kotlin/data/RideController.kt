@@ -1,7 +1,6 @@
 package me.tim.org.familycar_kotlin.data
 
 import android.content.Context
-import android.location.Location
 import android.util.Log
 import me.tim.org.familycar_kotlin.location.LocationController
 import me.tim.org.familycar_kotlin.obd2.ObdController
@@ -11,6 +10,8 @@ import kotlin.concurrent.fixedRateTimer
 
 /**
  * Created by Nekkyou on 2-11-2017.
+ *
+ * Controlls the rides.
  */
 class RideController(val context: Context) {
     val locationController: LocationController = LocationController(context)
@@ -18,14 +19,19 @@ class RideController(val context: Context) {
     val data = ArrayList<DataPoint>()
     private lateinit var timer: Timer
 
+    /**
+     * Starting a new ride.
+     */
     fun startRide() {
-        timer = fixedRateTimer(name = "dataPuller", initialDelay = 1000, period = 1000) {
-            requestData()
+        if (obdController.isConnected()) {
+            timer = fixedRateTimer(name = "dataPuller", initialDelay = 1000, period = 1000) {
+                requestData()
+            }
         }
     }
 
     fun finishRide() : Ride {
-        timer?.cancel()
+        timer.cancel()
         return Ride(Driver("Drivername"), data)
     }
 

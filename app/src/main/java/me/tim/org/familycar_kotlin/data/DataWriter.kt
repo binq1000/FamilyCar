@@ -2,8 +2,6 @@ package me.tim.org.familycar_kotlin.data
 
 import android.content.Context
 import com.google.gson.Gson
-import org.json.JSONObject
-import java.io.FileOutputStream
 
 /**
  * Created by Nekkyou on 1-11-2017.
