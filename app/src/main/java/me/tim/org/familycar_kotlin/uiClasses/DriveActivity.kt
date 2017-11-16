@@ -1,15 +1,20 @@
-package me.tim.org.familycar_kotlin
+package me.tim.org.familycar_kotlin.uiClasses
 
 import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.widget.Toast
 import com.abdallahalaraby.blink.Screenshot
 import kotlinx.android.synthetic.main.activity_drive.*
 import kotlinx.android.synthetic.main.content_drive.*
+import me.tim.org.familycar_kotlin.R
+import me.tim.org.familycar_kotlin.ScreenshotManager
 import me.tim.org.familycar_kotlin.customExceptions.ObdConnectionFailedException
+import me.tim.org.familycar_kotlin.data.DataWriter
 import me.tim.org.familycar_kotlin.data.RideController
+import me.tim.org.familycar_kotlin.latest
 import java.util.*
 import kotlin.concurrent.fixedRateTimer
 
@@ -70,6 +75,20 @@ class DriveActivity : AppCompatActivity() {
 
             timer = fixedRateTimer(name = "uiUpdater", initialDelay = 1000, period = 1000) {
                 runOnUiThread { updateData() }
+            }
+        }
+
+
+        btnStopDrive.setOnClickListener {
+            if (isDriving) {
+                isDriving = false
+                val ride = rideController?.finishRide()
+                //Save ride here.
+                val writer = DataWriter(applicationContext)
+                if (ride != null) {
+                    writer.saveRide(ride)
+                    Toast.makeText(applicationContext, "Ride saved", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }

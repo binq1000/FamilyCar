@@ -1,4 +1,4 @@
-package me.tim.org.familycar_kotlin
+package me.tim.org.familycar_kotlin.uiClasses
 
 import android.Manifest
 import android.content.Intent
@@ -20,6 +20,13 @@ import android.view.View
 import kotlinx.android.synthetic.main.content_home.*
 import me.tim.org.familycar_kotlin.data.*
 import java.util.*
+import android.content.IntentFilter
+import android.net.wifi.WifiManager
+import com.google.gson.Gson
+import me.tim.org.familycar_kotlin.R
+import me.tim.org.familycar_kotlin.WifiReceiver
+import me.tim.org.familycar_kotlin.toJson
+
 
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private var MY_PERMISSIONS_REQUEST_FINE_LOCATION: Int = 0
@@ -50,6 +57,11 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setHandlers()
 
         checkPermissions()
+
+
+        val intentFilter = IntentFilter()
+        intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION)
+        registerReceiver(WifiReceiver(), intentFilter)
     }
 
     private fun setHandlers() {
@@ -67,7 +79,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         writer.saveRide(ride)
 
-        val decryptedRide = reader.readRide()
+        val decryptedRide = reader.readRides()
         println(decryptedRide)
 
     }
@@ -104,19 +116,30 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Handle navigation view item clicks here.
         val id = item.itemId
 
-        if (id == R.id.nav_driving) {
-            val intent = Intent(applicationContext, DriveActivity::class.java)
-            startActivity(intent)
-        } else if (id == R.id.nav_gallery) {
+        when (id) {
+            R.id.nav_driving -> {
+                val intent = Intent(applicationContext, DriveActivity::class.java)
+                startActivity(intent)
+            }
+            R.id.nav_history -> {
+                val intent = Intent(applicationContext, HistoryActivity::class.java)
+                startActivity(intent)
+            }
+            R.id.nav_profile -> {
+                val intent = Intent(applicationContext, ProfileActivity::class.java)
+                val driver = Driver("Tim Daniels")
+                intent.putExtra("Driver", driver.toJson())
+                startActivity(intent)
+            }
+            R.id.nav_manage -> {
 
-        } else if (id == R.id.nav_slideshow) {
+            }
+            R.id.nav_share -> {
 
-        } else if (id == R.id.nav_manage) {
+            }
+            R.id.nav_send -> {
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+            }
         }
 
         val drawer = findViewById(R.id.drawer_layout) as DrawerLayout

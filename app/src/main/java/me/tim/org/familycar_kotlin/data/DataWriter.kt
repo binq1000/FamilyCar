@@ -9,12 +9,22 @@ import com.google.gson.Gson
 class DataWriter(val context: Context) {
 
     fun saveRide(ride: Ride) {
-        val filename = "rideSaves"
+        val filename = "rideSaves - ${System.currentTimeMillis()}"
         val gson = Gson()
+
+        //Get all old ones
+        val reader = DataReader(context)
+        var rides = reader.readRides()
+
+        if (rides == null) {
+            rides = ArrayList<Ride>()
+        }
+
+        rides.add(ride)
 
         try {
             val output = context.openFileOutput(filename, Context.MODE_PRIVATE)
-            val json = gson.toJson(ride)
+            val json = gson.toJson(rides)
             output.write(json.toByteArray())
             output.close()
         }

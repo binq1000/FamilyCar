@@ -9,4 +9,9 @@
     <string name="title_activity_drive">DriveActivity</string>
 
     <string name="btn_start_drive">Start Ride</string>
+    <string name="btn_stop_drive">Stop Ride</string>
+    <string name="title_activity_history">HistoryActivity</string>
+
+    <string name="tv_search">Search</string>
+    <string name="title_activity_profile">ProfileActivity</string>
 </resources>
