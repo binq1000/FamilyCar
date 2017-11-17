@@ -3,6 +3,7 @@ package me.tim.org.familycar_kotlin.obd2
 import android.content.Context
 import android.util.Log
 import com.github.pires.obd.commands.SpeedCommand
+import com.github.pires.obd.commands.control.VinCommand
 import com.github.pires.obd.commands.engine.RPMCommand
 import com.github.pires.obd.commands.protocol.*
 import com.github.pires.obd.enums.ObdProtocols
@@ -47,6 +48,30 @@ class ObdController(private val context: Context) {
         SpacesOffCommand().run(socket.getInputStream(), socket.getOutputStream())
         TimeoutCommand(100).run(socket.getInputStream(), socket.getOutputStream())
         SelectProtocolCommand(ObdProtocols.AUTO).run(socket.getInputStream(), socket.getOutputStream())
+
+        //Request VIM
+        val vin = requestVin()
+        //Now you know what car you are getting data for.
+    }
+
+    fun requestVin() : String{
+        checkAvailable()
+
+        var result = ""
+        val socket = bluetoothController.socket
+
+        val vinCommand = VinCommand()
+        try {
+            vinCommand.run(socket.getInputStream(), socket.getOutputStream())
+            result = vinCommand.formattedResult
+        } catch (e: IOException) {
+            e.printStackTrace()
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return result
     }
 
 

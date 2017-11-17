@@ -1,6 +1,7 @@
 package me.tim.org.familycar_kotlin.uiClasses
 
 import android.content.Context
+import android.content.Intent
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,8 @@ import android.widget.TextView
 import me.tim.org.familycar_kotlin.R
 import me.tim.org.familycar_kotlin.data.Ride
 import me.tim.org.familycar_kotlin.format
+import me.tim.org.familycar_kotlin.formatComplete
+import me.tim.org.familycar_kotlin.toJson
 
 /**
  * Created by Nekkyou on 10-11-2017.
@@ -17,12 +20,12 @@ class CustomAdapter(private val context: Context, private val list: List<Ride>) 
         class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         var driverTextview: TextView
         var startTimeTextview: TextView
-        var endTimeTextview: TextView
+        //var endTimeTextview: TextView
 
         init {
             driverTextview = itemView.findViewById(R.id.tvDriver) as TextView
             startTimeTextview = itemView.findViewById(R.id.tvStartTime) as TextView
-            endTimeTextview = itemView.findViewById(R.id.tvEndTime) as TextView
+            //endTimeTextview = itemView.findViewById(R.id.tvEndTime) as TextView
         }
     }
 
@@ -61,8 +64,13 @@ class CustomAdapter(private val context: Context, private val list: List<Ride>) 
         var ride: Ride = list[position]
 
         holder.driverTextview.text = ride.driver.name
-        holder.startTimeTextview.text = ride.dataPoints.first().time.format()
-        holder.endTimeTextview.text = ride.dataPoints.last().time.format()
+        holder.driverTextview.setOnClickListener {
+            val intent = Intent(context, ProfileActivity::class.java)
+            intent.putExtra("Driver", ride.driver.toJson())
+            context.startActivity(intent)
+        }
+        holder.startTimeTextview.text = ride.dataPoints.first().time.formatComplete()
+        //holder.endTimeTextview.text = ride.dataPoints.last().time.format()
     }
 
     /**

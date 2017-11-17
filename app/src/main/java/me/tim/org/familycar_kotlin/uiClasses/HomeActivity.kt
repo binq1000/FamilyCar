@@ -126,10 +126,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 startActivity(intent)
             }
             R.id.nav_profile -> {
-                val intent = Intent(applicationContext, ProfileActivity::class.java)
-                val driver = Driver("Tim Daniels")
-                intent.putExtra("Driver", driver.toJson())
-                startActivity(intent)
+
             }
             R.id.nav_manage -> {
 

@@ -4,6 +4,7 @@ import android.location.Location
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.util.DisplayMetrics
 
 import kotlinx.android.synthetic.main.activity_history.*
 import kotlinx.android.synthetic.main.content_history.*
@@ -28,6 +29,18 @@ class HistoryActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         setHandlers()
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        val dm = DisplayMetrics()
+        this.windowManager.defaultDisplay.getMetrics(dm)
+        val loc = IntArray(2)
+        rv_rides.getLocationOnScreen(loc)
+        val distance_to_bottom = dm.heightPixels - loc[1]
+
+        val params = rv_rides.layoutParams
+        params.height = distance_to_bottom
+        rv_rides.requestLayout()
     }
 
     private fun setHandlers() {

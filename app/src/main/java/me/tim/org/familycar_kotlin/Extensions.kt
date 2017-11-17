@@ -68,6 +68,16 @@ fun Calendar.format() : String {
     return "$day/$month/$year"
 }
 
+fun Calendar.formatComplete() : String {
+    val day = this.get(Calendar.DAY_OF_MONTH)
+    val month = this.get(Calendar.MONTH)
+    val year = this.get(Calendar.YEAR)
+    val hour = this.get(Calendar.HOUR)
+    val minute = this.get(Calendar.MINUTE)
+
+    return "$day/$month/$year $hour:$minute"
+}
+
 fun <T> T.toJson() : String {
     val gson = Gson()
     return gson.toJson(this)
