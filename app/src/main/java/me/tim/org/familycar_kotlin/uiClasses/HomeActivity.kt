@@ -23,24 +23,19 @@ import kotlinx.android.synthetic.main.content_home.*
 import me.tim.org.familycar_kotlin.data.*
 import java.util.*
 import android.content.IntentFilter
-import android.location.Location
 import android.net.wifi.WifiManager
 import android.support.v7.app.AlertDialog
 import android.text.InputType
 import android.util.Log
 import android.widget.EditText
-import com.google.gson.Gson
-import me.tim.org.familycar_kotlin.HttpManager
+import me.tim.org.familycar_kotlin.Controller.HttpController
 import me.tim.org.familycar_kotlin.R
 import me.tim.org.familycar_kotlin.WifiReceiver
 import me.tim.org.familycar_kotlin.toJson
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
-import java.net.URL
 
 
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -126,7 +121,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val sharedPref = getSharedPreferences(getString(R.string.pref_file_key), Context.MODE_PRIVATE)
         val editor = sharedPref.edit()
         doAsync {
-            val driver = HttpManager.post("/driver/create?name=$name")
+            val driver = HttpController.post("/driver/create?name=$name")
 
             editor.putString(getString(R.string.pref_driver), driver)
             editor.commit()
@@ -137,7 +132,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun testRestCall() {
         doAsync {
-            val responeString = HttpManager.run("/driver/1")
+            val responeString = HttpController.run("/driver/1")
             val driver: Driver = Driver.fromJSON(responeString)
 
 //            val responseString = http.post("/driver/create?name=Testy test")
@@ -148,7 +143,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val ride = Ride(0, driver, obdData)
             val json = ride.toJson()
             println(json)
-            val rideJson = HttpManager.post("/ride/", json)
+            val rideJson = HttpController.post("/ride/", json)
             val newRide: Ride = Ride.fromJSON(rideJson)
 
             uiThread {

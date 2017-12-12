@@ -1,4 +1,4 @@
-package me.tim.org.familycar_kotlin.obd2
+package me.tim.org.familycar_kotlin.Controller
 
 import android.content.Context
 import android.util.Log
@@ -8,7 +8,6 @@ import com.github.pires.obd.commands.engine.RPMCommand
 import com.github.pires.obd.commands.fuel.FuelLevelCommand
 import com.github.pires.obd.commands.protocol.*
 import com.github.pires.obd.enums.ObdProtocols
-import me.tim.org.familycar_kotlin.bluetooth.BluetoothController
 import me.tim.org.familycar_kotlin.customExceptions.BluetoothDisabledException
 import me.tim.org.familycar_kotlin.customExceptions.ObdConnectionFailedException
 import me.tim.org.familycar_kotlin.data.ObdData

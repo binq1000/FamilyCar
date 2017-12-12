@@ -1,9 +1,10 @@
-package me.tim.org.familycar_kotlin.data
+package me.tim.org.familycar_kotlin.Controller
 
 import android.content.Context
 import android.util.Log
-import me.tim.org.familycar_kotlin.location.LocationController
-import me.tim.org.familycar_kotlin.obd2.ObdController
+import me.tim.org.familycar_kotlin.data.DataPoint
+import me.tim.org.familycar_kotlin.data.Driver
+import me.tim.org.familycar_kotlin.data.Ride
 import org.joda.time.DateTime
 import java.util.*
 import kotlin.collections.ArrayList
@@ -33,7 +34,7 @@ class RideController(val context: Context) {
 
     fun finishRide() : Ride {
         timer.cancel()
-        return Ride(0, Driver(0,"Drivername"), data)
+        return Ride(0, Driver(0, "Drivername"), data)
     }
 
     private fun requestData() {

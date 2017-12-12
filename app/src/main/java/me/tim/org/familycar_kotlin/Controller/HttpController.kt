@@ -1,11 +1,11 @@
-package me.tim.org.familycar_kotlin
+package me.tim.org.familycar_kotlin.Controller
 
 import okhttp3.*
 
 /**
  * Created by Nekkyou on 5-12-2017.
  */
-object HttpManager {
+object HttpController {
     val BASE_PATH = "http://rest.timdaniels.nl:8080/api"
     val jsonType = MediaType.parse("application/json; charset=utf-8")
     val client = OkHttpClient()

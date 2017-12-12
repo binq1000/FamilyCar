@@ -1,8 +1,10 @@
-package me.tim.org.familycar_kotlin.bluetooth
+package me.tim.org.familycar_kotlin.Controller
 
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.content.Context
+import me.tim.org.familycar_kotlin.bluetooth.BluetoothConnector
+import me.tim.org.familycar_kotlin.bluetooth.BluetoothSocketWrapper
 import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList

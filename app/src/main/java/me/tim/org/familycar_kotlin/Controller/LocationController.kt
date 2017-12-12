@@ -1,4 +1,4 @@
-package me.tim.org.familycar_kotlin.location
+package me.tim.org.familycar_kotlin.Controller
 
 import android.content.Context
 import android.location.Location

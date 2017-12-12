@@ -8,11 +8,9 @@ import android.util.DisplayMetrics
 
 import kotlinx.android.synthetic.main.activity_history.*
 import kotlinx.android.synthetic.main.content_history.*
-import me.tim.org.familycar_kotlin.HttpManager
+import me.tim.org.familycar_kotlin.Controller.HttpController
 import me.tim.org.familycar_kotlin.R
-import me.tim.org.familycar_kotlin.compare
 import me.tim.org.familycar_kotlin.data.*
-import me.tim.org.familycar_kotlin.toJson
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.joda.time.DateTime
@@ -94,7 +92,7 @@ class HistoryActivity : AppCompatActivity() {
         println("Getting all rides from NL01")
         doAsync {
             println("Starting Async")
-            val json = HttpManager.run("/car/NL01/rides")
+            val json = HttpController.run("/car/NL01/rides")
             println(json)
             val rides = Ride.listFromJson(json)
             println("Found ${rides.size} Rides")

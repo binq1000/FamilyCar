@@ -10,10 +10,10 @@ import com.abdallahalaraby.blink.Screenshot
 import kotlinx.android.synthetic.main.activity_drive.*
 import kotlinx.android.synthetic.main.content_drive.*
 import me.tim.org.familycar_kotlin.R
-import me.tim.org.familycar_kotlin.ScreenshotManager
+import me.tim.org.familycar_kotlin.Controller.ScreenshotController
 import me.tim.org.familycar_kotlin.customExceptions.ObdConnectionFailedException
 import me.tim.org.familycar_kotlin.data.DataWriter
-import me.tim.org.familycar_kotlin.data.RideController
+import me.tim.org.familycar_kotlin.Controller.RideController
 import me.tim.org.familycar_kotlin.latest
 import me.tim.org.familycar_kotlin.nullCheck
 import java.util.*
@@ -113,9 +113,9 @@ class DriveActivity : AppCompatActivity() {
                 counter++
             }
             else {
-                val manager: ScreenshotManager = ScreenshotManager(applicationContext, contentResolver)
+                val controller: ScreenshotController = ScreenshotController(applicationContext, contentResolver)
                 val bm = Screenshot.getInstance().takeScreenshotForScreen(this)
-                manager.createScreenshot(bm)
+                controller.createScreenshot(bm)
 
                 counter = 0
             }
