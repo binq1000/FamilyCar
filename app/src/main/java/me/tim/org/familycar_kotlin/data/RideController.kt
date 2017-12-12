@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import me.tim.org.familycar_kotlin.location.LocationController
 import me.tim.org.familycar_kotlin.obd2.ObdController
+import org.joda.time.DateTime
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.concurrent.fixedRateTimer
@@ -32,14 +33,14 @@ class RideController(val context: Context) {
 
     fun finishRide() : Ride {
         timer.cancel()
-        return Ride(Driver("Drivername"), data)
+        return Ride(0, Driver(0,"Drivername"), data)
     }
 
     private fun requestData() {
         Log.d(this.javaClass.name, "Requesting data.")
         val obdData = obdController.requestData()
 
-        val dataPoint = DataPoint(Calendar.getInstance(), locationController.lastLocation, obdData)
+        val dataPoint = DataPoint(DateTime.now().toDate(), locationController.lastLocation?.latitude, locationController.lastLocation?.longitude, obdData)
         data.add(dataPoint)
     }
 

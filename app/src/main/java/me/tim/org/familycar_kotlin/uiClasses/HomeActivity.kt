@@ -1,6 +1,8 @@
 package me.tim.org.familycar_kotlin.uiClasses
 
 import android.Manifest
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -21,16 +23,28 @@ import kotlinx.android.synthetic.main.content_home.*
 import me.tim.org.familycar_kotlin.data.*
 import java.util.*
 import android.content.IntentFilter
+import android.location.Location
 import android.net.wifi.WifiManager
+import android.support.v7.app.AlertDialog
+import android.text.InputType
+import android.util.Log
+import android.widget.EditText
 import com.google.gson.Gson
+import me.tim.org.familycar_kotlin.HttpManager
 import me.tim.org.familycar_kotlin.R
 import me.tim.org.familycar_kotlin.WifiReceiver
 import me.tim.org.familycar_kotlin.toJson
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.longToast
+import org.jetbrains.anko.toast
+import org.jetbrains.anko.uiThread
+import java.net.URL
 
 
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private var MY_PERMISSIONS_REQUEST_FINE_LOCATION: Int = 0
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +67,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val navigationView = findViewById(R.id.nav_view) as NavigationView
         navigationView.setNavigationItemSelectedListener(this)
 
+        //Check if there is a driver connected to this phone, if not ask the user for his name
+        checkDriver()
 
         setHandlers()
 
@@ -62,26 +78,98 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val intentFilter = IntentFilter()
         intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION)
         registerReceiver(WifiReceiver(), intentFilter)
+
+
     }
 
     private fun setHandlers() {
-        btnTest.setOnClickListener(View.OnClickListener {  testReadWrite() })
+        btnTest.setOnClickListener(View.OnClickListener {  testRestCall() })
     }
 
+    private fun checkDriver() {
+        val sharedPref = getSharedPreferences(getString(R.string.pref_file_key), Context.MODE_PRIVATE)
+        val driverString = sharedPref.getString(getString(R.string.pref_driver), "")
+
+        println("DriverString: $driverString")
+
+        if (driverString == "") {
+            //No driver detected, prompt user for his name to create a Driver object.
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("What is your name")
+            builder.setCancelable(false)
+
+            val input = EditText(this)
+            input.inputType = InputType.TYPE_CLASS_TEXT
+            builder.setView(input)
+
+            builder.setPositiveButton("OK", DialogInterface.OnClickListener { dialogInterface, i ->  createSharedPrefDriver(input.text.toString())})
+
+            val dialog = builder.show()
+            val button = dialog.getButton(DialogInterface.BUTTON_POSITIVE)
+            button.setOnClickListener {
+                val text = input.text.toString()
+                if (text != "") {
+                    createSharedPrefDriver(text)
+                    dialog.dismiss()
+                } else {
+                    toast("Invalid name")
+                }
+            }
+        } else {
+            //There is a known driver.
+            toast(driverString)
+        }
+    }
+
+    private fun createSharedPrefDriver(name: String) {
+        println("Creating shared pref driver")
+        val sharedPref = getSharedPreferences(getString(R.string.pref_file_key), Context.MODE_PRIVATE)
+        val editor = sharedPref.edit()
+        doAsync {
+            val driver = HttpManager.post("/driver/create?name=$name")
+
+            editor.putString(getString(R.string.pref_driver), driver)
+            editor.commit()
+            println("Commited shared pref driver")
+        }
+
+    }
+
+    private fun testRestCall() {
+        doAsync {
+            val responeString = HttpManager.run("/driver/1")
+            val driver: Driver = Driver.fromJSON(responeString)
+
+//            val responseString = http.post("/driver/create?name=Testy test")
+//            val driver: Driver = Driver.fromJSON(responseString)
+
+            //Create Ride.
+            val obdData = ArrayList<DataPoint>()
+            val ride = Ride(0, driver, obdData)
+            val json = ride.toJson()
+            println(json)
+            val rideJson = HttpManager.post("/ride/", json)
+            val newRide: Ride = Ride.fromJSON(rideJson)
+
+            uiThread {
+                Log.d("Request", driver.name)
+                longToast(driver.name)
+            }
+        }
+    }
 
     private fun testReadWrite() {
         val writer = DataWriter(applicationContext)
         val reader = DataReader(applicationContext)
 
-        val driver = Driver("testDriver")
+        val driver = Driver(0,"testDriver")
         val obdData = ArrayList<DataPoint>()
-        val ride = Ride(driver, obdData)
+        val ride = Ride(0, driver, obdData)
 
         writer.saveRide(ride)
 
         val decryptedRide = reader.readRides()
         println(decryptedRide)
-
     }
 
     override fun onBackPressed() {

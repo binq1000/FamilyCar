@@ -1,6 +1,7 @@
 package me.tim.org.familycar_kotlin
 
 import com.google.gson.Gson
+import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -77,6 +78,12 @@ fun Calendar.formatComplete() : String {
 
     return "$day/$month/$year $hour:$minute"
 }
+
+fun Date.formatComplete() : String {
+    val sdf = SimpleDateFormat("dd/MM/yyyy hh:mm")
+    return ""
+}
+
 
 fun <T> T.toJson() : String {
     val gson = Gson()

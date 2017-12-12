@@ -15,6 +15,7 @@ import me.tim.org.familycar_kotlin.customExceptions.ObdConnectionFailedException
 import me.tim.org.familycar_kotlin.data.DataWriter
 import me.tim.org.familycar_kotlin.data.RideController
 import me.tim.org.familycar_kotlin.latest
+import me.tim.org.familycar_kotlin.nullCheck
 import java.util.*
 import kotlin.concurrent.fixedRateTimer
 
@@ -99,13 +100,15 @@ class DriveActivity : AppCompatActivity() {
             if (latestData != null) {
                 tvRpm.text = "Touren: ${latestData.obdData.rpm.toString()}"
                 tvSpeed.text = "Snelheid: ${latestData.obdData.speed.toString()}"
-                tvLocation.text = "Location: \n Lat: ${latestData.location?.latitude} \n Long: ${latestData.location?.longitude}"
+                tvLocation.text = "Location: \n Lat: ${latestData.latitude} \n Long: ${latestData.longitude}"
+                setFuelCircle(latestData.obdData.fuel)
             }
             else {
                 tvRpm.text = "LatestData is null"
                 Log.i("DriveActvity", "Latest data is null")
             }
 
+            //Take a screenshot every tenth time the data updates.
             if (counter < 10) {
                 counter++
             }
@@ -117,6 +120,15 @@ class DriveActivity : AppCompatActivity() {
                 counter = 0
             }
         }
+    }
+
+    fun setFuelCircle(level: Float?) {
+        level.nullCheck {
+            val animation = CircleAngleAnimation(circle, level!!.toInt())
+            animation.duration = 1000
+            circle.startAnimation(animation)
+        }
+
     }
 
 

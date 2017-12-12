@@ -9,7 +9,7 @@ import com.google.gson.Gson
 class DataWriter(val context: Context) {
 
     fun saveRide(ride: Ride) {
-        val filename = "rideSaves - ${System.currentTimeMillis()}"
+        val filename = "rideSaves"
         val gson = Gson()
 
         //Get all old ones

@@ -38,13 +38,24 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.github.pires:obd-java-api:1.0'
     compile 'com.google.android.gms:play-services-location:11.4.2'
+
     // For screenshots
     compile 'com.abdallahalaraby.blink:library:0.1.2@aar'
+
     //Picasso for images from url
     compile 'com.squareup.picasso:picasso:2.5.2'
 
+    //Anko for easy Async
+    compile 'org.jetbrains.anko:anko-common:0.9'
+
+    //For Http
+    compile 'com.squareup.okhttp3:okhttp:3.9.1'
+
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     compile group: 'com.google.code.gson', name: 'gson', version: '2.8.2'
+
+    //Joda Time
+    compile 'joda-time:joda-time:2.9.9'
 
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }

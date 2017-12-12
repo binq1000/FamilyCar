@@ -8,12 +8,14 @@ import android.util.DisplayMetrics
 
 import kotlinx.android.synthetic.main.activity_history.*
 import kotlinx.android.synthetic.main.content_history.*
+import me.tim.org.familycar_kotlin.HttpManager
 import me.tim.org.familycar_kotlin.R
 import me.tim.org.familycar_kotlin.compare
-import me.tim.org.familycar_kotlin.data.DataPoint
-import me.tim.org.familycar_kotlin.data.Driver
-import me.tim.org.familycar_kotlin.data.ObdData
-import me.tim.org.familycar_kotlin.data.Ride
+import me.tim.org.familycar_kotlin.data.*
+import me.tim.org.familycar_kotlin.toJson
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
+import org.joda.time.DateTime
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -57,10 +59,13 @@ class HistoryActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        (1..50).mapTo(allItems) { generateItem(it) }
-        items.addAll(allItems)
 
-        adapter.notifyDataSetChanged()
+        //Get items for the list.
+        getAllRides()
+//        (1..50).mapTo(allItems) { generateItem(it) }
+//        items.addAll(allItems)
+
+
     }
 
     private fun generateItem(i: Int): Ride {
@@ -69,30 +74,49 @@ class HistoryActivity : AppCompatActivity() {
                 "Daan Daniëls",
                 "Jan Daniëls"
         )
-        val driver = Driver(drivers[(Math.random() * drivers.size).toInt()])
+        val driver = Driver(0, drivers[(Math.random() * drivers.size).toInt()])
         val data = ArrayList<DataPoint>()
 
         val startLocation = Location("Casteren")
         val endLocation = Location("Eindhoven")
-        val start = Calendar.getInstance()
-        val end = Calendar.getInstance()
-        start.add(Calendar.HOUR, (-1 * i))
-        end.add(Calendar.HOUR, (-1 * i) + 1)
+        val start = DateTime.now()
+        val end = DateTime.now()
+        start.minusHours(-1 * i)
+        end.minusHours((-1 * i) + 1)
 
-        data.add(DataPoint(start, startLocation, ObdData(0, 0)))
-        data.add(DataPoint(end, endLocation, ObdData(0,0)))
+        data.add(DataPoint(start.toDate(), startLocation.latitude, startLocation.longitude, ObdData(0, 0, 0f)))
+        data.add(DataPoint(end.toDate(), endLocation.latitude, endLocation.longitude, ObdData(0,0, 0f)))
 
-        return Ride(driver, data)
+        return Ride(0, driver, data)
+    }
+
+    private fun getAllRides() {
+        println("Getting all rides from NL01")
+        doAsync {
+            println("Starting Async")
+            val json = HttpManager.run("/car/NL01/rides")
+            println(json)
+            val rides = Ride.listFromJson(json)
+            println("Found ${rides.size} Rides")
+            allItems.addAll(rides)
+            items.addAll(allItems)
+            uiThread {
+                println("Done with Async")
+                adapter.notifyDataSetChanged()
+            }
+
+        }
     }
 
     fun filter(calendar: Calendar) {
         println("Filter method called")
+        val date = calendar.time
         val newItems = ArrayList<Ride>()
 
         for(item in allItems) {
-            if (item.dataPoints.first().time.compare(calendar) == 0) {
+            if (item.dataPoints.first().time == date) {
                 newItems.add(item)
-            } else if (item.dataPoints.last().time.compare(calendar) == 0) {
+            } else if (item.dataPoints.last().time == date) {
                 newItems.add(item)
             }
         }

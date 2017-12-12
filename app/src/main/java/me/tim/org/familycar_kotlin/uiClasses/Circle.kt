@@ -47,8 +47,5 @@ class Circle(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         canvas.drawArc(rect, START_ANGLE_POINT, angle, false, paint)
 
         canvas.drawText("${(angle/3.6).toInt()}", rect.centerX(), rect.centerY() + (textPaint.textSize / 3), textPaint)
-        textPaint.textSize = 50f
-        canvas.drawText("Eco score", rect.centerX(), rect.bottom + textPaint.textSize, textPaint)
-        textPaint.textSize = 100f
     }
 }

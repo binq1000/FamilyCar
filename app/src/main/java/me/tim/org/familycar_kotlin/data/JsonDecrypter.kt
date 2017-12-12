@@ -5,4 +5,6 @@ package me.tim.org.familycar_kotlin.data
  */
 interface JsonDecrypter {
     fun fromJSON(json: String) : Any
+
+    fun listFromJson(json: String) : Any
 }
