@@ -8,7 +8,7 @@ import android.util.DisplayMetrics
 
 import kotlinx.android.synthetic.main.activity_history.*
 import kotlinx.android.synthetic.main.content_history.*
-import me.tim.org.familycar_kotlin.Controller.HttpController
+import me.tim.org.familycar_kotlin.controller.HttpController
 import me.tim.org.familycar_kotlin.R
 import me.tim.org.familycar_kotlin.data.*
 import org.jetbrains.anko.doAsync

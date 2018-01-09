@@ -1,4 +1,4 @@
-package me.tim.org.familycar_kotlin.Controller
+package me.tim.org.familycar_kotlin.controller
 
 import android.content.Context
 import android.util.Log
@@ -16,6 +16,8 @@ import kotlin.concurrent.fixedRateTimer
  * Controlls the rides.
  */
 class RideController(val context: Context) {
+    var vin: String = ""
+
     val locationController: LocationController = LocationController(context)
     val obdController: ObdController = ObdController(context)
     val data = ArrayList<DataPoint>()
@@ -32,14 +34,17 @@ class RideController(val context: Context) {
         }
     }
 
-    fun finishRide() : Ride {
+    fun finishRide() : Pair<String, Ride> {
         timer.cancel()
-        return Ride(0, Driver(0, "Drivername"), data)
+        return Pair<String, Ride>(vin, Ride(0, Driver(0, "Drivername"), data))
     }
 
     private fun requestData() {
         Log.d(this.javaClass.name, "Requesting data.")
         val obdData = obdController.requestData()
+        if (vin == "") {
+            vin = obdController.requestVin()
+        }
 
         val dataPoint = DataPoint(DateTime.now().toDate(), locationController.lastLocation?.latitude, locationController.lastLocation?.longitude, obdData)
         data.add(dataPoint)

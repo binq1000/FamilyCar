@@ -13,7 +13,9 @@ import android.graphics.RectF
 /**
  * Created by Nekkyou on 16-11-2017.
  */
-class Circle(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
+class Circle(context: Context?, attrs: AttributeSet?) :
+        View(context, attrs) {
+
     private val START_ANGLE_POINT = -90f
 
     private val paint: Paint = Paint()

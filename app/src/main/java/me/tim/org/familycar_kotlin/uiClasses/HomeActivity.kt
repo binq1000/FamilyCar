@@ -28,7 +28,7 @@ import android.support.v7.app.AlertDialog
 import android.text.InputType
 import android.util.Log
 import android.widget.EditText
-import me.tim.org.familycar_kotlin.Controller.HttpController
+import me.tim.org.familycar_kotlin.controller.HttpController
 import me.tim.org.familycar_kotlin.R
 import me.tim.org.familycar_kotlin.WifiReceiver
 import me.tim.org.familycar_kotlin.toJson
@@ -161,7 +161,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val obdData = ArrayList<DataPoint>()
         val ride = Ride(0, driver, obdData)
 
-        writer.saveRide(ride)
+        writer.saveRide("testvin", ride)
 
         val decryptedRide = reader.readRides()
         println(decryptedRide)
@@ -209,7 +209,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 startActivity(intent)
             }
             R.id.nav_profile -> {
-
+                val intent = Intent(applicationContext, PlanningActivity::class.java)
+                startActivity(intent)
             }
             R.id.nav_manage -> {
 

@@ -1,5 +1,6 @@
-package me.tim.org.familycar_kotlin.Controller
+package me.tim.org.familycar_kotlin.controller
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
 import android.os.Bundle
@@ -12,7 +13,11 @@ import com.google.android.gms.location.LocationServices
 /**
  * Created by Nekkyou on 1-11-2017.
  */
-class LocationController(private var context: Context) : GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+class LocationController(private var context: Context) :
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        LocationListener {
+
     private var googleApiClient: GoogleApiClient? = null
     var lastLocation: Location? = null
 
@@ -32,6 +37,7 @@ class LocationController(private var context: Context) : GoogleApiClient.Connect
 
 
     //region Google Api methods
+    @SuppressLint("MissingPermission")
     override fun onConnected(p0: Bundle?) {
         val request = LocationRequest()
         request.interval = 10000
@@ -42,11 +48,11 @@ class LocationController(private var context: Context) : GoogleApiClient.Connect
     }
 
     override fun onConnectionSuspended(p0: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     override fun onConnectionFailed(p0: ConnectionResult) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     override fun onLocationChanged(location: Location?) {

@@ -16,8 +16,13 @@ import me.tim.org.familycar_kotlin.toJson
 /**
  * Created by Nekkyou on 10-11-2017.
  */
-class CustomAdapter(private val context: Context, private val list: List<Ride>) : RecyclerView.Adapter<CustomAdapter.ViewHolder>() {
-        class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+class CustomAdapter(
+        private val context: Context,
+        private val list: List<Ride>
+) : RecyclerView.Adapter<CustomAdapter.ViewHolder>() {
+
+    class ViewHolder(itemView: View) :
+            RecyclerView.ViewHolder(itemView) {
         var driverTextview: TextView
         var startTimeTextview: TextView
         //var endTimeTextview: TextView

@@ -1,4 +1,4 @@
-package me.tim.org.familycar_kotlin.Controller
+package me.tim.org.familycar_kotlin.controller
 
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
@@ -60,7 +60,11 @@ class BluetoothController(private val contect: Context) {
     }
 
     fun getDeviceAddress() : String {
-        // TODO search in the file, or search for the available ones with a certain name.
-        return "00:1D:A5:68:98:8B"
+        var address = ""
+        val paired = adapter.bondedDevices
+        paired
+                .filter { it.name.startsWith("OBD") }
+                .forEach { address = it.address }
+        return address
     }
 }

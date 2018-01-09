@@ -12,7 +12,9 @@ import java.util.*
 /**
  * Created by Nekkyou on 8-11-2017.
  */
-class SelectDateFragment: DialogFragment(), DatePickerDialog.OnDateSetListener {
+class SelectDateFragment :
+        DialogFragment(),
+        DatePickerDialog.OnDateSetListener {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val calendar = Calendar.getInstance()

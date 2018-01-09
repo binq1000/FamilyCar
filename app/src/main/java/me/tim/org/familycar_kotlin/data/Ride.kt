@@ -27,8 +27,6 @@ data class Ride(
             }
 
             return rides
-//            return gson.fromJson(json, Array<Ride>::class.java).toList()
         }
     }
-
 }

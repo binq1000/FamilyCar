@@ -14,7 +14,6 @@ import java.util.*
  * Created by Nekkyou on 27-10-2017.
  */
 class BluetoothConnector(
-
         private val device: BluetoothDevice,
         private val secure: Boolean,
         private val adapter: BluetoothAdapter,

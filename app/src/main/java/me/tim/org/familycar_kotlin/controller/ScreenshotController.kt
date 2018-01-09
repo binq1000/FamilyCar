@@ -1,4 +1,4 @@
-package me.tim.org.familycar_kotlin.Controller
+package me.tim.org.familycar_kotlin.controller
 
 import android.content.ContentResolver
 import android.content.Context
@@ -10,7 +10,10 @@ import java.util.*
 /**
  * Created by Nekkyou on 6-11-2017.
  */
-class ScreenshotController(val context: Context, val contentResolver: ContentResolver) {
+class ScreenshotController(
+        val context: Context,
+        val contentResolver: ContentResolver
+) {
     fun createScreenshot(bitmap: Bitmap) {
         val now = Date()
         android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", now)

@@ -10,10 +10,10 @@ import com.abdallahalaraby.blink.Screenshot
 import kotlinx.android.synthetic.main.activity_drive.*
 import kotlinx.android.synthetic.main.content_drive.*
 import me.tim.org.familycar_kotlin.R
-import me.tim.org.familycar_kotlin.Controller.ScreenshotController
+import me.tim.org.familycar_kotlin.controller.ScreenshotController
 import me.tim.org.familycar_kotlin.customExceptions.ObdConnectionFailedException
 import me.tim.org.familycar_kotlin.data.DataWriter
-import me.tim.org.familycar_kotlin.Controller.RideController
+import me.tim.org.familycar_kotlin.controller.RideController
 import me.tim.org.familycar_kotlin.latest
 import me.tim.org.familycar_kotlin.nullCheck
 import java.util.*
@@ -87,14 +87,14 @@ class DriveActivity : AppCompatActivity() {
                 //Save ride here.
                 val writer = DataWriter(applicationContext)
                 if (ride != null) {
-                    writer.saveRide(ride)
+                    writer.saveRide(ride.first, ride.second)
                     Toast.makeText(applicationContext, "Ride saved", Toast.LENGTH_SHORT).show()
                 }
             }
         }
     }
 
-    fun updateData() {
+    private fun updateData() {
         runOnUiThread {
             val latestData = rideController?.data.latest()
             if (latestData != null) {
@@ -102,27 +102,27 @@ class DriveActivity : AppCompatActivity() {
                 tvSpeed.text = "Snelheid: ${latestData.obdData.speed.toString()}"
                 tvLocation.text = "Location: \n Lat: ${latestData.latitude} \n Long: ${latestData.longitude}"
                 setFuelCircle(latestData.obdData.fuel)
+
+                //Take a screenshot every tenth time the data updates.
+                if (counter < 10) {
+                    counter++
+                }
+                else {
+                    val controller: ScreenshotController = ScreenshotController(applicationContext, contentResolver)
+                    val bm = Screenshot.getInstance().takeScreenshotForScreen(this)
+                    controller.createScreenshot(bm)
+
+                    counter = 0
+                }
             }
             else {
                 tvRpm.text = "LatestData is null"
                 Log.i("DriveActvity", "Latest data is null")
             }
-
-            //Take a screenshot every tenth time the data updates.
-            if (counter < 10) {
-                counter++
-            }
-            else {
-                val controller: ScreenshotController = ScreenshotController(applicationContext, contentResolver)
-                val bm = Screenshot.getInstance().takeScreenshotForScreen(this)
-                controller.createScreenshot(bm)
-
-                counter = 0
-            }
         }
     }
 
-    fun setFuelCircle(level: Float?) {
+    private fun setFuelCircle(level: Float?) {
         level.nullCheck {
             val animation = CircleAngleAnimation(circle, level!!.toInt())
             animation.duration = 1000

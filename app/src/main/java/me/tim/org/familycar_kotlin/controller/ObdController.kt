@@ -1,4 +1,4 @@
-package me.tim.org.familycar_kotlin.Controller
+package me.tim.org.familycar_kotlin.controller
 
 import android.content.Context
 import android.util.Log
@@ -37,7 +37,7 @@ class ObdController(private val context: Context) {
     /**
      *
      */
-    fun initalCommands() {
+    private fun initalCommands() {
         checkAvailable()
 
         val socket = bluetoothController.socket
@@ -50,7 +50,7 @@ class ObdController(private val context: Context) {
         SelectProtocolCommand(ObdProtocols.AUTO).run(socket.getInputStream(), socket.getOutputStream())
 
         //Request VIM
-        val vin = requestVin()
+//        val vin = requestVin()
         //Now you know what car you are getting data for.
     }
 
@@ -75,7 +75,7 @@ class ObdController(private val context: Context) {
     }
 
 
-    fun requestRpm(): Int {
+    private fun requestRpm(): Int {
         checkAvailable()
 
         var result = 0
@@ -123,7 +123,7 @@ class ObdController(private val context: Context) {
         return result
     }
 
-    fun requesFuel(): Float {
+    private fun requesFuel(): Float {
         checkAvailable()
 
         var result = 0f
@@ -157,7 +157,7 @@ class ObdController(private val context: Context) {
         return ObdData(speed, rpm, fuel)
     }
 
-    fun checkAvailable() {
+    private fun checkAvailable() {
         if (!bluetoothController.connected) {
             throw ObdConnectionFailedException("Failed to connect to the obd sensor")
         }
